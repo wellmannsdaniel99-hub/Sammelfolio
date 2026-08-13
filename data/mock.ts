@@ -1,5 +1,7 @@
 export type ProductType = 'Top-Trainer-Box' | 'Booster Bundle' | 'Display' | 'Booster' | 'Kollektion' | 'Tin' | 'Mini-Tin' | 'Sonstiges';
-export type CollectionItem = { id:string; name:string; subtitle:string; kind:'Karte'|'Sealed'; quantity:number; buyPrice:number; marketPrice:number; productType?:ProductType; setName?:string; language?:'DE'; purchaseDate?:string; notes?:string; custom?:boolean; photoUri?:string; };
+export type ProductLanguage = 'DE'|'EN'|'JP';
+export const languageName=(l?:ProductLanguage)=>l==='EN'?'Englisch':l==='JP'?'Japanisch':'Deutsch';
+export type CollectionItem = { id:string; name:string; subtitle:string; kind:'Karte'|'Sealed'; quantity:number; buyPrice:number; marketPrice:number; productType?:ProductType; setName?:string; language?:ProductLanguage; purchaseDate?:string; notes?:string; custom?:boolean; photoUri?:string; };
 const sealed=(id:string,name:string,setName:string,productType:ProductType,marketPrice=0):CollectionItem=>({id,name,subtitle:`${setName} · Deutsch · ${productType}`,kind:'Sealed',quantity:1,buyPrice:0,marketPrice,productType,setName,language:'DE'});
 const ttb=(id:string,setName:string)=>sealed(`ttb-${id}-de`,`${setName} Top-Trainer-Box`,setName,'Top-Trainer-Box');
 export const collection:CollectionItem[]=[{id:'mew-199',name:'Glurak ex',subtitle:'199/165 · 151 · DE · NM',kind:'Karte',quantity:1,buyPrice:220,marketPrice:315,language:'DE'},{id:'151-bundle',name:'151 Booster Bundle',subtitle:'151 · Deutsch · Booster Bundle',kind:'Sealed',quantity:4,buyPrice:59.99,marketPrice:139.5,productType:'Booster Bundle',setName:'151',language:'DE'},{id:'mew-200',name:'Turtok ex',subtitle:'200/165 · 151 · DE · NM',kind:'Karte',quantity:1,buyPrice:105,marketPrice:169,language:'DE'}];
