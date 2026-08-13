@@ -1,20 +1,8 @@
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
+import { BrandMark } from '../../components/BrandMark';
+import { useCollection } from '../../store/collection';
+import { useWishlist } from '../../store/wishlist';
 
-export default function ProfileScreen() {
-  return (
-    <SafeAreaView style={styles.safe}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Profil</Text>
-        <Text style={styles.subtitle}>Verwaltung, Preisquellen und App-Einstellungen.</Text>
-        <Pressable style={styles.action} onPress={() => router.push('/sealed-prices')}>
-          <View><Text style={styles.label}>SEALED-PREISE</Text><Text style={styles.value}>Preise pflegen</Text><Text style={styles.meta}>TTBs, Bundles und Displays zentral aktualisieren</Text></View><Text style={styles.chevron}>›</Text>
-        </Pressable>
-        <View style={styles.card}><Text style={styles.label}>SPRACHE</Text><Text style={styles.value}>Deutsch</Text></View>
-        <View style={styles.card}><Text style={styles.label}>PREISQUELLEN</Text><Text style={styles.value}>Karten: TCGdex · Sealed: manuell</Text></View>
-      </View>
-    </SafeAreaView>
-  );
-}
-
-const styles = StyleSheet.create({safe:{flex:1,backgroundColor:'#080D19'},container:{padding:20},title:{color:'#F6F8FF',fontSize:28,fontWeight:'900'},subtitle:{color:'#78839D',marginTop:4,marginBottom:18,lineHeight:20},action:{backgroundColor:'#11192A',borderRadius:18,padding:16,borderWidth:1,borderColor:'#28365A',marginBottom:10,flexDirection:'row',justifyContent:'space-between',alignItems:'center'},card:{backgroundColor:'#0F1727',borderRadius:18,padding:16,borderWidth:1,borderColor:'#1C263A',marginBottom:10},label:{color:'#6F7C97',fontSize:11,fontWeight:'800'},value:{color:'#F2F5FF',fontSize:15,fontWeight:'800',marginTop:6},meta:{color:'#77839A',fontSize:12,marginTop:4},chevron:{color:'#8193FF',fontSize:28}});
+export default function ProfileScreen(){const{items}=useCollection();const{items:wishes}=useWishlist();const sealed=items.filter(i=>i.kind==='Sealed').length;const cards=items.filter(i=>i.kind==='Karte').length;return <SafeAreaView style={s.safe}><ScrollView contentContainerStyle={s.c}><View style={s.brand}><BrandMark/><View><Text style={s.word}>SAMMELFOLIO</Text><Text style={s.claim}>SAMMELN · VERWALTEN · ENTDECKEN</Text></View></View><Text style={s.title}>Profil & Verwaltung</Text><Text style={s.sub}>Dein Kontrollzentrum für Preise, Daten und eigene Produkte.</Text><View style={s.stats}><View><Text style={s.num}>{cards}</Text><Text style={s.lab}>KARTEN</Text></View><View><Text style={s.num}>{sealed}</Text><Text style={s.lab}>SEALED</Text></View><View><Text style={s.num}>{wishes.length}</Text><Text style={s.lab}>WÜNSCHE</Text></View></View><Pressable style={s.action} onPress={()=>router.push('/sealed-prices')}><View><Text style={s.kicker}>SEALED-PREISE</Text><Text style={s.value}>Tagespreise pflegen</Text><Text style={s.meta}>ETBs, Displays, Bundles, Tins und mehr</Text></View><Text style={s.chev}>›</Text></Pressable><Pressable style={s.action} onPress={()=>router.push('/manual-product')}><View><Text style={s.kicker}>EIGENES PRODUKT</Text><Text style={s.value}>Fehlendes Sealed anlegen</Text><Text style={s.meta}>Produktname, Set, Typ, Kaufpreis und Wert</Text></View><Text style={s.chev}>›</Text></Pressable><View style={s.card}><Text style={s.kicker}>PREISQUELLEN</Text><Text style={s.value}>Einzelkarten: TCGdex</Text><Text style={s.meta}>Sealed: deine manuell gepflegten Tagespreise</Text></View><View style={s.card}><Text style={s.kicker}>SPRACHE</Text><Text style={s.value}>Deutsch</Text><Text style={s.meta}>Sammelfolio ist auf deutsche Produkte ausgerichtet.</Text></View></ScrollView></SafeAreaView>}
+const s=StyleSheet.create({safe:{flex:1,backgroundColor:'#050914'},c:{padding:20,paddingBottom:40},brand:{flexDirection:'row',gap:14,alignItems:'center',marginBottom:22},word:{color:'#F7FAFF',fontWeight:'900',fontSize:21,letterSpacing:1.5},claim:{color:'#74819D',fontSize:8,fontWeight:'900',letterSpacing:1.1,marginTop:4},title:{color:'#F7F9FF',fontSize:28,fontWeight:'900'},sub:{color:'#74819A',marginTop:5,lineHeight:19,marginBottom:16},stats:{flexDirection:'row',justifyContent:'space-around',backgroundColor:'#0B1325',borderRadius:20,borderWidth:1,borderColor:'#21305A',padding:15,marginBottom:14},num:{color:'#84E3F4',fontSize:22,fontWeight:'900',textAlign:'center'},lab:{color:'#687792',fontSize:9,fontWeight:'900',marginTop:3},action:{backgroundColor:'#0A1222',borderRadius:18,padding:16,borderWidth:1,borderColor:'#293A65',marginBottom:10,flexDirection:'row',justifyContent:'space-between',alignItems:'center'},card:{backgroundColor:'#09111F',borderRadius:18,padding:16,borderWidth:1,borderColor:'#192743',marginBottom:10},kicker:{color:'#6EDDF2',fontSize:9,fontWeight:'900',letterSpacing:1},value:{color:'#F2F5FF',fontSize:15,fontWeight:'900',marginTop:6},meta:{color:'#74819A',fontSize:11,marginTop:4},chev:{color:'#9B7EFF',fontSize:29}});
