@@ -24,18 +24,19 @@ export default function DiscoverScreen() {
     return () => clearTimeout(timer);
   }, [query]);
 
-  const sealed = discoveries.filter(item => item.kind === 'Sealed' && `${item.name} ${item.subtitle}`.toLowerCase().includes(query.toLowerCase()));
+  const normalized = query.trim().toLowerCase();
+  const sealed = discoveries.filter(item => item.kind === 'Sealed' && (!normalized || `${item.name} ${item.subtitle} ${item.productType ?? ''}`.toLowerCase().includes(normalized)));
 
   return (
     <SafeAreaView style={styles.safe}>
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
         <Text style={styles.title}>Entdecken</Text>
-        <Text style={styles.subtitle}>Deutsche Pokémon-Karten live über TCGdex suchen.</Text>
-        <TextInput value={query} onChangeText={setQuery} placeholder="z. B. Glurak oder Pikachu" placeholderTextColor="#657089" style={styles.search} autoCorrect={false} />
+        <Text style={styles.subtitle}>Deutsche Karten live suchen und Top-Trainer-Boxen direkt verwalten.</Text>
+        <TextInput value={query} onChangeText={setQuery} placeholder="z. B. Glurak, 151 oder Top-Trainer-Box" placeholderTextColor="#657089" style={styles.search} autoCorrect={false} />
         {loading && <ActivityIndicator style={styles.loader} />}
         {!!error && <Text style={styles.error}>{error}</Text>}
 
-        {cards.map(card => (
+        {query.trim().length >= 2 && cards.map(card => (
           <Pressable key={card.id} style={styles.card} onPress={() => router.push({ pathname: '/card/[id]', params: { id: card.id } })}>
             {card.image ? <Image source={{ uri: cardImage(card.image) }} style={styles.image} /> : <View style={styles.badge}><Text style={styles.badgeText}>KARTE</Text></View>}
             <View style={styles.main}><Text style={styles.name}>{card.name}</Text><Text style={styles.meta}>#{card.localId} · Deutsch</Text></View>
@@ -43,15 +44,16 @@ export default function DiscoverScreen() {
           </Pressable>
         ))}
 
-        {sealed.length > 0 && <Text style={styles.section}>Sealed · noch eigener Katalog</Text>}
+        {sealed.length > 0 && <Text style={styles.section}>Top-Trainer-Boxen & Sealed</Text>}
         {sealed.map(item => (
           <Pressable key={item.id} style={styles.card} onPress={() => router.push({ pathname: '/item/[id]', params: { id: item.id } })}>
-            <View style={styles.badge}><Text style={styles.badgeText}>SEALED</Text></View>
+            <View style={styles.badge}><Text style={styles.badgeText}>{item.productType === 'Top-Trainer-Box' ? 'TTB' : 'SEALED'}</Text></View>
             <View style={styles.main}><Text style={styles.name}>{item.name}</Text><Text style={styles.meta}>{item.subtitle}</Text></View>
             <Text style={styles.price}>{euro(item.marketPrice)}</Text>
           </Pressable>
         ))}
-        {query.length < 2 && <Text style={styles.hint}>Mindestens zwei Zeichen eingeben. Die Karten kommen jetzt nicht mehr aus unseren Demo-Daten.</Text>}
+
+        {!query.trim() && <Text style={styles.hint}>Top-Trainer-Boxen werden auch ohne Suche angezeigt. Die angezeigten Sealed-Preise sind vorerst Platzhalter und werden später durch eine echte Preisquelle ersetzt.</Text>}
       </ScrollView>
     </SafeAreaView>
   );
