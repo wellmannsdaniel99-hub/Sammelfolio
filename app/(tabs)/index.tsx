@@ -19,7 +19,7 @@ export default function PortfolioScreen() {
   return <SafeAreaView style={styles.safe}><ScrollView contentContainerStyle={styles.container}>
     <View style={styles.brandRow}><BrandMark/><View><Text style={styles.brand}>SAMMELFOLIO</Text><Text style={styles.claim}>SAMMELN · VERWALTEN · ENTDECKEN</Text></View></View>
     <View style={styles.hero}>
-      <View style={styles.glow}/><Text style={styles.label}>DEIN PORTFOLIO</Text><Text style={styles.value}>{euro(value)}</Text>
+      <View style={styles.glow}/><Text style={styles.label}>DEIN SAMMELFOLIO</Text><Text style={styles.value}>{euro(value)}</Text>
       <Text style={[styles.gain,!positive && styles.loss]}>{positive?'+':''}{euro(gain)} · {positive?'+':''}{pct.toFixed(1)} %</Text>
       <View style={styles.chart}>{[32,48,42,68,76,96,112].map((height,i)=><View key={i} style={[styles.bar,{height}]}/>)}</View>
       <View style={styles.stats}><View><Text style={styles.statLabel}>INVESTIERT</Text><Text style={styles.statValue}>{euro(invested)}</Text></View><View><Text style={styles.statLabel}>SAMMLERSTÜCKE</Text><Text style={styles.statValue}>{items.reduce((s,i)=>s+i.quantity,0)}</Text></View></View>
