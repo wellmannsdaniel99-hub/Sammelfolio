@@ -7,7 +7,6 @@
     "userInterfaceStyle": "dark",
     "scheme": "sammelfolio",
     "plugins": ["expo-router"],
-    "experiments": { "typedRoutes": true },
     "ios": { "supportsTablet": true },
     "android": { "adaptiveIcon": { "backgroundColor": "#0B1020" } }
   }
