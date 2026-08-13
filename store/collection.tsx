@@ -9,6 +9,8 @@ type AddInput = {
   quantity: number;
   buyPrice: number;
   condition?: string;
+  purchaseDate?: string;
+  notes?: string;
 };
 
 type CollectionContextValue = {
@@ -40,7 +42,7 @@ export function CollectionProvider({ children }: PropsWithChildren) {
     AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(items)).catch(() => {});
   }, [items, isHydrated]);
 
-  const addItem = ({ item, quantity, buyPrice, condition }: AddInput) => {
+  const addItem = ({ item, quantity, buyPrice, condition, purchaseDate, notes }: AddInput) => {
     setItems(current => {
       const existing = current.find(entry => entry.id === item.id);
       const subtitle = condition && item.kind === 'Karte'
@@ -50,10 +52,17 @@ export function CollectionProvider({ children }: PropsWithChildren) {
       if (existing) {
         const totalQty = existing.quantity + quantity;
         const weightedBuy = ((existing.buyPrice * existing.quantity) + (buyPrice * quantity)) / totalQty;
-        return current.map(entry => entry.id === item.id ? { ...entry, quantity: totalQty, buyPrice: weightedBuy, subtitle } : entry);
+        return current.map(entry => entry.id === item.id ? {
+          ...entry,
+          quantity: totalQty,
+          buyPrice: weightedBuy,
+          subtitle,
+          purchaseDate: purchaseDate || entry.purchaseDate,
+          notes: notes || entry.notes,
+        } : entry);
       }
 
-      return [...current, { ...item, quantity, buyPrice, subtitle }];
+      return [...current, { ...item, quantity, buyPrice, subtitle, purchaseDate, notes }];
     });
   };
 
