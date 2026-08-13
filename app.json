@@ -1,0 +1,14 @@
+{
+  "expo": {
+    "name": "Sammelfolio",
+    "slug": "sammelfolio",
+    "owner": "welle99",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "scheme": "sammelfolio",
+    "plugins": ["expo-router"],
+    "ios": { "supportsTablet": true },
+    "android": { "adaptiveIcon": { "backgroundColor": "#0B1020" } }
+  }
+}
