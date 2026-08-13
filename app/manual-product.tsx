@@ -1,8 +1,65 @@
 import { useState } from 'react';
-import { Alert,Pressable,SafeAreaView,ScrollView,StyleSheet,Text,TextInput,View } from 'react-native';
+import { Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import { ProductType } from '../data/mock';
 import { useCollection } from '../store/collection';
-const types:ProductType[]=['Top-Trainer-Box','Booster Bundle','Display','Booster','Kollektion','Tin','Mini-Tin','Sonstiges'];
-export default function ManualProduct(){const{addItem}=useCollection();const[name,setName]=useState('');const[setName,setSetName]=useState('');const[type,setType]=useState<ProductType>('Top-Trainer-Box');const[buy,setBuy]=useState('');const[value,setValue]=useState('');const[qty,setQty]=useState('1');const save=()=>{if(!name.trim()){Alert.alert('Name fehlt','Bitte gib einen Produktnamen ein.');return}const q=Math.max(1,parseInt(qty)||1),b=parseFloat(buy.replace(',','.'))||0,m=parseFloat(value.replace(',','.'))||0;addItem({item:{id:`custom-${Date.now()}`,name:name.trim(),subtitle:`${setName.trim()||'Eigenes Produkt'} · Deutsch · ${type}`,kind:'Sealed',quantity:1,buyPrice:b,marketPrice:m,productType:type,setName:setName.trim()||'Eigenes Produkt',language:'DE',custom:true},quantity:q,buyPrice:b});Alert.alert('Gespeichert','Produkt wurde deiner Sammlung hinzugefügt.',[{text:'OK',onPress:()=>router.back()}])};return <SafeAreaView style={s.safe}><ScrollView contentContainerStyle={s.c}><Pressable onPress={()=>router.back()}><Text style={s.back}>‹ Zurück</Text></Pressable><Text style={s.kicker}>EIGENES PRODUKT</Text><Text style={s.title}>Sealed hinzufügen</Text><Text style={s.sub}>Fehlt etwas im Katalog, kannst du es sofort selbst erfassen.</Text><Text style={s.label}>PRODUKTNAME</Text><TextInput style={s.input} value={name} onChangeText={setName} placeholder="z. B. 151 Top-Trainer-Box" placeholderTextColor="#65718A"/><Text style={s.label}>SET / SERIE</Text><TextInput style={s.input} value={setName} onChangeText={setSetName} placeholder="z. B. 151" placeholderTextColor="#65718A"/><Text style={s.label}>PRODUKTTYP</Text><View style={s.types}>{types.map(t=><Pressable key={t} onPress={()=>setType(t)} style={[s.chip,type===t&&s.chipOn]}><Text style={[s.chipText,type===t&&s.chipTextOn]}>{t}</Text></Pressable>)}</View><Text style={s.label}>KAUFPREIS €</Text><TextInput style={s.input} value={buy} onChangeText={setBuy} keyboardType="decimal-pad" placeholder="0,00" placeholderTextColor="#65718A"/><Text style={s.label}>AKTUELLER WERT €</Text><TextInput style={s.input} value={value} onChangeText={setValue} keyboardType="decimal-pad" placeholder="0,00" placeholderTextColor="#65718A"/><Text style={s.label}>ANZAHL</Text><TextInput style={s.input} value={qty} onChangeText={setQty} keyboardType="number-pad"/><Pressable style={s.save} onPress={save}><Text style={s.saveText}>Zur Sammlung hinzufügen</Text></Pressable></ScrollView></SafeAreaView>}
-const s=StyleSheet.create({safe:{flex:1,backgroundColor:'#050914'},c:{padding:20,paddingBottom:40},back:{color:'#72DDF1',fontWeight:'800',marginBottom:20},kicker:{color:'#8B78FF',fontSize:9,fontWeight:'900',letterSpacing:1.4},title:{color:'#F7F9FF',fontSize:30,fontWeight:'900',marginTop:5},sub:{color:'#74819A',lineHeight:19,marginTop:5,marginBottom:20},label:{color:'#7888A5',fontSize:10,fontWeight:'900',letterSpacing:1,marginTop:14,marginBottom:7},input:{backgroundColor:'#0A1222',borderWidth:1,borderColor:'#213354',borderRadius:14,padding:14,color:'#F4F7FF'},types:{flexDirection:'row',flexWrap:'wrap',gap:7},chip:{paddingHorizontal:10,paddingVertical:8,borderRadius:99,borderWidth:1,borderColor:'#263654',backgroundColor:'#0A1222'},chipOn:{borderColor:'#5ED9EF',backgroundColor:'#142B48'},chipText:{color:'#8491A8',fontSize:10,fontWeight:'800'},chipTextOn:{color:'#7FE4F5'},save:{backgroundColor:'#635BDF',borderRadius:16,padding:16,alignItems:'center',marginTop:25},saveText:{color:'white',fontWeight:'900'}});
+
+const types: ProductType[] = ['Top-Trainer-Box', 'Booster Bundle', 'Display', 'Booster', 'Kollektion', 'Tin', 'Mini-Tin', 'Sonstiges'];
+
+export default function ManualProduct() {
+  const { addItem } = useCollection();
+  const [name, setName] = useState('');
+  const [series, setSeries] = useState('');
+  const [type, setType] = useState<ProductType>('Top-Trainer-Box');
+  const [buy, setBuy] = useState('');
+  const [marketValue, setMarketValue] = useState('');
+  const [qty, setQty] = useState('1');
+
+  const save = () => {
+    if (!name.trim()) {
+      Alert.alert('Name fehlt', 'Bitte gib einen Produktnamen ein.');
+      return;
+    }
+    const quantity = Math.max(1, parseInt(qty, 10) || 1);
+    const buyPrice = parseFloat(buy.replace(',', '.')) || 0;
+    const marketPrice = parseFloat(marketValue.replace(',', '.')) || 0;
+    const setLabel = series.trim() || 'Eigenes Produkt';
+
+    addItem({
+      item: {
+        id: `custom-${Date.now()}`,
+        name: name.trim(),
+        subtitle: `${setLabel} · Deutsch · ${type}`,
+        kind: 'Sealed',
+        quantity: 1,
+        buyPrice,
+        marketPrice,
+        productType: type,
+        setName: setLabel,
+        language: 'DE',
+        custom: true,
+      },
+      quantity,
+      buyPrice,
+    });
+
+    Alert.alert('Gespeichert', 'Produkt wurde deiner Sammlung hinzugefügt.', [
+      { text: 'OK', onPress: () => router.back() },
+    ]);
+  };
+
+  return <SafeAreaView style={s.safe}><ScrollView contentContainerStyle={s.c} keyboardShouldPersistTaps="handled">
+    <Pressable onPress={() => router.back()}><Text style={s.back}>‹ Zurück</Text></Pressable>
+    <Text style={s.kicker}>EIGENES PRODUKT</Text><Text style={s.title}>Sealed hinzufügen</Text>
+    <Text style={s.sub}>Fehlt etwas im Katalog, kannst du es sofort selbst erfassen.</Text>
+    <Text style={s.label}>PRODUKTNAME</Text><TextInput style={s.input} value={name} onChangeText={setName} placeholder="z. B. 151 Top-Trainer-Box" placeholderTextColor="#65718A" />
+    <Text style={s.label}>SET / SERIE</Text><TextInput style={s.input} value={series} onChangeText={setSeries} placeholder="z. B. 151" placeholderTextColor="#65718A" />
+    <Text style={s.label}>PRODUKTTYP</Text><View style={s.types}>{types.map(t => <Pressable key={t} onPress={() => setType(t)} style={[s.chip, type === t && s.chipOn]}><Text style={[s.chipText, type === t && s.chipTextOn]}>{t}</Text></Pressable>)}</View>
+    <Text style={s.label}>KAUFPREIS €</Text><TextInput style={s.input} value={buy} onChangeText={setBuy} keyboardType="decimal-pad" placeholder="0,00" placeholderTextColor="#65718A" />
+    <Text style={s.label}>AKTUELLER WERT €</Text><TextInput style={s.input} value={marketValue} onChangeText={setMarketValue} keyboardType="decimal-pad" placeholder="0,00" placeholderTextColor="#65718A" />
+    <Text style={s.label}>ANZAHL</Text><TextInput style={s.input} value={qty} onChangeText={setQty} keyboardType="number-pad" />
+    <Pressable style={s.save} onPress={save}><Text style={s.saveText}>Zur Sammlung hinzufügen</Text></Pressable>
+  </ScrollView></SafeAreaView>;
+}
+
+const s = StyleSheet.create({safe:{flex:1,backgroundColor:'#050914'},c:{padding:20,paddingBottom:40},back:{color:'#72DDF1',fontWeight:'800',marginBottom:20},kicker:{color:'#8B78FF',fontSize:9,fontWeight:'900',letterSpacing:1.4},title:{color:'#F7F9FF',fontSize:30,fontWeight:'900',marginTop:5},sub:{color:'#74819A',lineHeight:19,marginTop:5,marginBottom:20},label:{color:'#7888A5',fontSize:10,fontWeight:'900',letterSpacing:1,marginTop:14,marginBottom:7},input:{backgroundColor:'#0A1222',borderWidth:1,borderColor:'#213354',borderRadius:14,padding:14,color:'#F4F7FF'},types:{flexDirection:'row',flexWrap:'wrap',gap:7},chip:{paddingHorizontal:10,paddingVertical:8,borderRadius:99,borderWidth:1,borderColor:'#263654',backgroundColor:'#0A1222'},chipOn:{borderColor:'#5ED9EF',backgroundColor:'#142B48'},chipText:{color:'#8491A8',fontSize:10,fontWeight:'800'},chipTextOn:{color:'#7FE4F5'},save:{backgroundColor:'#635BDF',borderRadius:16,padding:16,alignItems:'center',marginTop:25},saveText:{color:'white',fontWeight:'900'}});
