@@ -11,6 +11,7 @@ type AddInput = {
   condition?: string;
   purchaseDate?: string;
   notes?: string;
+  photoUri?: string;
 };
 
 type CollectionContextValue = {
@@ -42,7 +43,7 @@ export function CollectionProvider({ children }: PropsWithChildren) {
     AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(items)).catch(() => {});
   }, [items, isHydrated]);
 
-  const addItem = ({ item, quantity, buyPrice, condition, purchaseDate, notes }: AddInput) => {
+  const addItem = ({ item, quantity, buyPrice, condition, purchaseDate, notes, photoUri }: AddInput) => {
     setItems(current => {
       const existing = current.find(entry => entry.id === item.id);
       const subtitle = condition && item.kind === 'Karte'
@@ -59,10 +60,11 @@ export function CollectionProvider({ children }: PropsWithChildren) {
           subtitle,
           purchaseDate: purchaseDate || entry.purchaseDate,
           notes: notes || entry.notes,
+          photoUri: photoUri || entry.photoUri,
         } : entry);
       }
 
-      return [...current, { ...item, quantity, buyPrice, subtitle, purchaseDate, notes }];
+      return [...current, { ...item, quantity, buyPrice, subtitle, purchaseDate, notes, photoUri }];
     });
   };
 
