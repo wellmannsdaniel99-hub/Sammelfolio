@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 import { ProductType } from '../data/mock';
+import { ProductSilhouette } from '../components/ProductSilhouette';
 import { useCollection } from '../store/collection';
 
 const types: ProductType[] = ['Top-Trainer-Box', 'Booster Bundle', 'Display', 'Booster', 'Kollektion', 'Tin', 'Mini-Tin', 'Sonstiges'];
@@ -14,6 +16,19 @@ export default function ManualProduct() {
   const [buy, setBuy] = useState('');
   const [marketValue, setMarketValue] = useState('');
   const [qty, setQty] = useState('1');
+  const [photoUri, setPhotoUri] = useState<string | undefined>();
+
+  const pickPhoto = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsEditing: true, quality: .82 });
+    if (!result.canceled) setPhotoUri(result.assets[0].uri);
+  };
+
+  const takePhoto = async () => {
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) return;
+    const result = await ImagePicker.launchCameraAsync({ mediaTypes: ['images'], allowsEditing: true, quality: .82 });
+    if (!result.canceled) setPhotoUri(result.assets[0].uri);
+  };
 
   const save = () => {
     if (!name.trim()) {
@@ -38,9 +53,11 @@ export default function ManualProduct() {
         setName: setLabel,
         language: 'DE',
         custom: true,
+        photoUri,
       },
       quantity,
       buyPrice,
+      photoUri,
     });
 
     Alert.alert('Gespeichert', 'Produkt wurde deiner Sammlung hinzugefügt.', [
@@ -52,6 +69,7 @@ export default function ManualProduct() {
     <Pressable onPress={() => router.back()}><Text style={s.back}>‹ Zurück</Text></Pressable>
     <Text style={s.kicker}>EIGENES PRODUKT</Text><Text style={s.title}>Sealed hinzufügen</Text>
     <Text style={s.sub}>Fehlt etwas im Katalog, kannst du es sofort selbst erfassen.</Text>
+    <View style={s.photoCard}>{photoUri?<Image source={{uri:photoUri}} style={s.photo}/>:<ProductSilhouette type={type} size={88}/>}<View style={s.photoCopy}><Text style={s.photoTitle}>Dein Produktfoto</Text><Text style={s.photoText}>Optional. Das Bild bleibt an deinem Sammlungsstück.</Text><View style={s.photoActions}><Pressable style={s.photoButton} onPress={takePhoto}><Text style={s.photoButtonText}>Kamera</Text></Pressable><Pressable style={s.photoButton} onPress={pickPhoto}><Text style={s.photoButtonText}>Mediathek</Text></Pressable></View></View></View>
     <Text style={s.label}>PRODUKTNAME</Text><TextInput style={s.input} value={name} onChangeText={setName} placeholder="z. B. 151 Top-Trainer-Box" placeholderTextColor="#65718A" />
     <Text style={s.label}>SET / SERIE</Text><TextInput style={s.input} value={series} onChangeText={setSeries} placeholder="z. B. 151" placeholderTextColor="#65718A" />
     <Text style={s.label}>PRODUKTTYP</Text><View style={s.types}>{types.map(t => <Pressable key={t} onPress={() => setType(t)} style={[s.chip, type === t && s.chipOn]}><Text style={[s.chipText, type === t && s.chipTextOn]}>{t}</Text></Pressable>)}</View>
@@ -62,4 +80,4 @@ export default function ManualProduct() {
   </ScrollView></SafeAreaView>;
 }
 
-const s = StyleSheet.create({safe:{flex:1,backgroundColor:'#050914'},c:{padding:20,paddingBottom:40},back:{color:'#72DDF1',fontWeight:'800',marginBottom:20},kicker:{color:'#8B78FF',fontSize:9,fontWeight:'900',letterSpacing:1.4},title:{color:'#F7F9FF',fontSize:30,fontWeight:'900',marginTop:5},sub:{color:'#74819A',lineHeight:19,marginTop:5,marginBottom:20},label:{color:'#7888A5',fontSize:10,fontWeight:'900',letterSpacing:1,marginTop:14,marginBottom:7},input:{backgroundColor:'#0A1222',borderWidth:1,borderColor:'#213354',borderRadius:14,padding:14,color:'#F4F7FF'},types:{flexDirection:'row',flexWrap:'wrap',gap:7},chip:{paddingHorizontal:10,paddingVertical:8,borderRadius:99,borderWidth:1,borderColor:'#263654',backgroundColor:'#0A1222'},chipOn:{borderColor:'#5ED9EF',backgroundColor:'#142B48'},chipText:{color:'#8491A8',fontSize:10,fontWeight:'800'},chipTextOn:{color:'#7FE4F5'},save:{backgroundColor:'#635BDF',borderRadius:16,padding:16,alignItems:'center',marginTop:25},saveText:{color:'white',fontWeight:'900'}});
+const s = StyleSheet.create({safe:{flex:1,backgroundColor:'#050914'},c:{padding:20,paddingBottom:40},back:{color:'#72DDF1',fontWeight:'800',marginBottom:20},kicker:{color:'#8B78FF',fontSize:9,fontWeight:'900',letterSpacing:1.4},title:{color:'#F7F9FF',fontSize:30,fontWeight:'900',marginTop:5},sub:{color:'#74819A',lineHeight:19,marginTop:5,marginBottom:20},photoCard:{backgroundColor:'#0A1222',borderRadius:18,borderWidth:1,borderColor:'#263A68',padding:13,flexDirection:'row',alignItems:'center'},photo:{width:88,height:88,borderRadius:13,backgroundColor:'#10182B'},photoCopy:{flex:1,marginLeft:13},photoTitle:{color:'#F4F7FF',fontSize:14,fontWeight:'900'},photoText:{color:'#77849D',fontSize:10,lineHeight:15,marginTop:4},photoActions:{flexDirection:'row',gap:7,marginTop:9},photoButton:{borderRadius:10,borderWidth:1,borderColor:'#4662A3',paddingHorizontal:10,paddingVertical:7,backgroundColor:'#111C35'},photoButtonText:{color:'#8DE3F2',fontSize:10,fontWeight:'900'},label:{color:'#7888A5',fontSize:10,fontWeight:'900',letterSpacing:1,marginTop:14,marginBottom:7},input:{backgroundColor:'#0A1222',borderWidth:1,borderColor:'#213354',borderRadius:14,padding:14,color:'#F4F7FF'},types:{flexDirection:'row',flexWrap:'wrap',gap:7},chip:{paddingHorizontal:10,paddingVertical:8,borderRadius:99,borderWidth:1,borderColor:'#263654',backgroundColor:'#0A1222'},chipOn:{borderColor:'#5ED9EF',backgroundColor:'#142B48'},chipText:{color:'#8491A8',fontSize:10,fontWeight:'800'},chipTextOn:{color:'#7FE4F5'},save:{backgroundColor:'#635BDF',borderRadius:16,padding:16,alignItems:'center',marginTop:25},saveText:{color:'white',fontWeight:'900'}});
