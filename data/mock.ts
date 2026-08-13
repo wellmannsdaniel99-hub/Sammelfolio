@@ -9,6 +9,8 @@ export type CollectionItem = {
   productType?: 'Top-Trainer-Box' | 'Booster Bundle' | 'Display' | 'Sonstiges';
   setName?: string;
   language?: 'DE';
+  purchaseDate?: string;
+  notes?: string;
 };
 
 export const collection: CollectionItem[] = [
@@ -43,11 +45,5 @@ export const boosterDisplays: CollectionItem[] = [
   { id: 'display-reisegefaehrten-de', name: 'Reisegefährten Booster Display', subtitle: 'Reisegefährten · Deutsch · Display', kind: 'Sealed', quantity: 1, buyPrice: 124.99, marketPrice: 139.9, productType: 'Display', setName: 'Reisegefährten', language: 'DE' },
 ];
 
-export const discoveries: CollectionItem[] = [
-  ...collection,
-  ...topTrainerBoxes,
-  ...boosterBundles,
-  ...boosterDisplays,
-];
-
+export const discoveries: CollectionItem[] = [...collection, ...topTrainerBoxes, ...boosterBundles, ...boosterDisplays];
 export const euro = (value: number) => new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value);
