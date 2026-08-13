@@ -15,6 +15,12 @@
           "photosPermission": "Sammelfolio darf auf deine Fotos zugreifen, damit du eigene Produktbilder zu deiner Sammlung hinzufügen kannst.",
           "cameraPermission": "Sammelfolio darf die Kamera verwenden, damit du dein Sammlerstück fotografieren kannst."
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Sammelfolio darf die Kamera verwenden, damit du Karten und Produkt-Barcodes scannen kannst."
+        }
       ]
     ],
     "ios": { "supportsTablet": true },
