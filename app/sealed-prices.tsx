@@ -1,43 +1,8 @@
-import { useMemo, useState } from 'react';
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useMemo,useState } from 'react';
+import { Pressable,SafeAreaView,ScrollView,StyleSheet,Text,TextInput,View } from 'react-native';
 import { router } from 'expo-router';
-import { discoveries, euro } from '../data/mock';
+import { discoveries,euro,ProductType } from '../data/mock';
 import { useSealedPrices } from '../store/sealedPrices';
-
-const filters = ['Alle','Top-Trainer-Box','Booster Bundle','Display'] as const;
-type Filter = typeof filters[number];
-
-export default function SealedPricesScreen() {
-  const { latestPrice, setPrice } = useSealedPrices();
-  const [filter, setFilter] = useState<Filter>('Alle');
-  const [query, setQuery] = useState('');
-  const [drafts, setDrafts] = useState<Record<string,string>>({});
-
-  const products = useMemo(() => discoveries.filter(item => item.kind === 'Sealed' && (filter === 'Alle' || item.productType === filter) && `${item.name} ${item.setName ?? ''}`.toLowerCase().includes(query.trim().toLowerCase())), [filter, query]);
-
-  const save = (id: string, fallback: number) => {
-    const raw = drafts[id] ?? String(latestPrice(id, fallback)).replace('.', ',');
-    const price = Number.parseFloat(raw.replace(',', '.'));
-    if (!Number.isFinite(price) || price <= 0) return;
-    setPrice(id, price);
-    setDrafts(current => ({ ...current, [id]: '' }));
-  };
-
-  return <SafeAreaView style={styles.safe}><ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-    <Pressable onPress={() => router.back()}><Text style={styles.back}>‹ Zurück</Text></Pressable>
-    <Text style={styles.title}>Preise pflegen</Text>
-    <Text style={styles.subtitle}>Deine deutschen Sealed-Produkte schnell in einem Rutsch aktualisieren.</Text>
-    <TextInput value={query} onChangeText={setQuery} placeholder="Set oder Produkt suchen" placeholderTextColor="#657089" style={styles.search} />
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters}>{filters.map(value => <Pressable key={value} onPress={() => setFilter(value)} style={[styles.filter, filter === value && styles.filterActive]}><Text style={[styles.filterText, filter === value && styles.filterTextActive]}>{value}</Text></Pressable>)}</ScrollView>
-    {products.map(item => {
-      const current = latestPrice(item.id, item.marketPrice);
-      return <View key={item.id} style={styles.card}>
-        <View style={styles.topRow}><View style={styles.main}><Text style={styles.name}>{item.name}</Text><Text style={styles.meta}>{item.setName} · {item.productType}</Text></View><Text style={styles.current}>{euro(current)}</Text></View>
-        <View style={styles.editRow}><TextInput value={drafts[item.id] ?? ''} onChangeText={value => setDrafts(currentDrafts => ({ ...currentDrafts, [item.id]: value }))} placeholder={String(current).replace('.', ',')} placeholderTextColor="#69758F" keyboardType="decimal-pad" style={styles.input} /><Pressable onPress={() => save(item.id, item.marketPrice)} style={styles.save}><Text style={styles.saveText}>Speichern</Text></Pressable></View>
-        <Pressable onPress={() => router.push({ pathname: '/sealed-price/[id]', params: { id: item.id } })}><Text style={styles.details}>Verlauf ansehen ›</Text></Pressable>
-      </View>;
-    })}
-  </ScrollView></SafeAreaView>;
-}
-
-const styles = StyleSheet.create({safe:{flex:1,backgroundColor:'#080D19'},container:{padding:20,paddingBottom:40},back:{color:'#8193FF',fontWeight:'800',marginBottom:18},title:{color:'#F6F8FF',fontSize:28,fontWeight:'900'},subtitle:{color:'#78839D',marginTop:5,marginBottom:18,lineHeight:20},search:{backgroundColor:'#11192A',borderRadius:14,borderWidth:1,borderColor:'#202A40',paddingHorizontal:14,paddingVertical:13,color:'#F6F8FF'},filters:{gap:8,paddingVertical:14},filter:{paddingHorizontal:13,paddingVertical:9,borderRadius:999,backgroundColor:'#11192A',borderWidth:1,borderColor:'#202A40'},filterActive:{backgroundColor:'#7C8FFF',borderColor:'#7C8FFF'},filterText:{color:'#A8B1C7',fontWeight:'800',fontSize:12},filterTextActive:{color:'#07101C'},card:{backgroundColor:'#0F1727',borderRadius:18,padding:14,borderWidth:1,borderColor:'#1C263A',marginBottom:10},topRow:{flexDirection:'row',alignItems:'center',justifyContent:'space-between'},main:{flex:1,paddingRight:10},name:{color:'#F2F5FF',fontWeight:'800',fontSize:15},meta:{color:'#77839A',fontSize:12,marginTop:4},current:{color:'#F2F5FF',fontWeight:'900'},editRow:{flexDirection:'row',gap:8,marginTop:12},input:{flex:1,backgroundColor:'#11192A',borderWidth:1,borderColor:'#202A40',borderRadius:12,paddingHorizontal:12,paddingVertical:10,color:'#F6F8FF'},save:{backgroundColor:'#7C8FFF',borderRadius:12,paddingHorizontal:14,justifyContent:'center'},saveText:{color:'#07101C',fontWeight:'900',fontSize:12},details:{color:'#8FA0FF',fontWeight:'800',fontSize:12,marginTop:10}});
+const filters:('Alle'|ProductType)[]=['Alle','Top-Trainer-Box','Booster Bundle','Display','Booster','Kollektion','Tin','Mini-Tin'];
+export default function SealedPricesScreen(){const{latestPrice,setPrice}=useSealedPrices();const[filter,setFilter]=useState<'Alle'|ProductType>('Alle');const[query,setQuery]=useState('');const[drafts,setDrafts]=useState<Record<string,string>>({});const products=useMemo(()=>discoveries.filter(i=>i.kind==='Sealed'&&(filter==='Alle'||i.productType===filter)&&`${i.name} ${i.setName??''}`.toLowerCase().includes(query.trim().toLowerCase())),[filter,query]);const save=(id:string,fallback:number)=>{const raw=drafts[id]??String(latestPrice(id,fallback)).replace('.',',');const price=parseFloat(raw.replace(',','.'));if(!Number.isFinite(price)||price<=0)return;setPrice(id,price);setDrafts(c=>({...c,[id]:''}))};return <SafeAreaView style={s.safe}><ScrollView contentContainerStyle={s.c} keyboardShouldPersistTaps="handled"><Pressable onPress={()=>router.back()}><Text style={s.back}>‹ Zurück</Text></Pressable><Text style={s.kicker}>SEALED · TAGESPREISE</Text><Text style={s.title}>Preise pflegen</Text><Text style={s.sub}>Alle deutschen Sealed-Produkte zentral aktualisieren. Jeder gespeicherte Preis landet im Verlauf.</Text><TextInput value={query} onChangeText={setQuery} placeholder="Produkt oder Set suchen" placeholderTextColor="#657089" style={s.search}/><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.filters}>{filters.map(v=><Pressable key={v} onPress={()=>setFilter(v)} style={[s.filter,filter===v&&s.on]}><Text style={[s.filterText,filter===v&&s.onText]}>{v==='Top-Trainer-Box'?'ETB':v}</Text></Pressable>)}</ScrollView><Text style={s.count}>{products.length} Produkte</Text>{products.map(i=>{const current=latestPrice(i.id,i.marketPrice);return <View key={i.id} style={s.card}><View style={s.top}><View style={s.icon}><View style={s.box}/><View style={s.cardLine}/></View><View style={s.main}><Text style={s.name}>{i.name}</Text><Text style={s.meta}>{i.setName} · {i.productType}</Text></View><Text style={s.current}>{current?euro(current):'–'}</Text></View><View style={s.edit}><TextInput value={drafts[i.id]??''} onChangeText={v=>setDrafts(d=>({...d,[i.id]:v}))} placeholder={current?String(current).replace('.',','):'0,00'} placeholderTextColor="#69758F" keyboardType="decimal-pad" style={s.input}/><Pressable onPress={()=>save(i.id,i.marketPrice)} style={s.save}><Text style={s.saveText}>Speichern</Text></Pressable></View><Pressable onPress={()=>router.push({pathname:'/sealed-price/[id]',params:{id:i.id}})}><Text style={s.details}>Preisverlauf ansehen ›</Text></Pressable></View>})}</ScrollView></SafeAreaView>}
+const s=StyleSheet.create({safe:{flex:1,backgroundColor:'#050914'},c:{padding:20,paddingBottom:40},back:{color:'#73DDF1',fontWeight:'800',marginBottom:18},kicker:{color:'#8F78FF',fontSize:9,fontWeight:'900',letterSpacing:1.2},title:{color:'#F6F8FF',fontSize:29,fontWeight:'900',marginTop:5},sub:{color:'#74819A',marginTop:5,marginBottom:17,lineHeight:19},search:{backgroundColor:'#0A1222',borderRadius:14,borderWidth:1,borderColor:'#233654',padding:13,color:'#F6F8FF'},filters:{gap:7,paddingVertical:12},filter:{paddingHorizontal:11,paddingVertical:8,borderRadius:99,backgroundColor:'#0A1222',borderWidth:1,borderColor:'#1F304D'},on:{backgroundColor:'#16304D',borderColor:'#58D7EF'},filterText:{color:'#8995AB',fontWeight:'800',fontSize:10},onText:{color:'#81E5F5'},count:{color:'#697791',fontSize:10,fontWeight:'800',marginBottom:9},card:{backgroundColor:'#09111F',borderRadius:18,padding:13,borderWidth:1,borderColor:'#192743',marginBottom:10},top:{flexDirection:'row',alignItems:'center'},icon:{width:43,height:43,borderRadius:10,borderWidth:1,borderColor:'#634BB6',backgroundColor:'#11162C',alignItems:'center',justifyContent:'center'},box:{width:27,height:20,borderWidth:2,borderColor:'#9D65F5',borderRadius:3},cardLine:{position:'absolute',width:13,height:23,borderWidth:2,borderColor:'#4DD9EF',borderRadius:2,transform:[{rotate:'-10deg'}]},main:{flex:1,paddingHorizontal:10},name:{color:'#F2F5FF',fontWeight:'900',fontSize:13},meta:{color:'#74819A',fontSize:10,marginTop:3},current:{color:'#F2F5FF',fontWeight:'900',fontSize:13},edit:{flexDirection:'row',gap:8,marginTop:11},input:{flex:1,backgroundColor:'#0E1729',borderWidth:1,borderColor:'#24344F',borderRadius:12,paddingHorizontal:12,paddingVertical:10,color:'#F6F8FF'},save:{backgroundColor:'#655CDF',borderRadius:12,paddingHorizontal:14,justifyContent:'center'},saveText:{color:'#FFF',fontWeight:'900',fontSize:11},details:{color:'#79DDF1',fontWeight:'800',fontSize:11,marginTop:9}});
