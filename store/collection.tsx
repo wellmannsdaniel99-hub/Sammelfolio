@@ -17,6 +17,7 @@ type AddInput = {
 type CollectionContextValue = {
   items: CollectionItem[];
   addItem: (input: AddInput) => void;
+  removeItem: (id: string) => void;
   isHydrated: boolean;
 };
 
@@ -68,7 +69,9 @@ export function CollectionProvider({ children }: PropsWithChildren) {
     });
   };
 
-  const value = useMemo(() => ({ items, addItem, isHydrated }), [items, isHydrated]);
+  const removeItem = (id: string) => setItems(current => current.filter(entry => entry.id !== id));
+
+  const value = useMemo(() => ({ items, addItem, removeItem, isHydrated }), [items, isHydrated]);
   return <CollectionContext.Provider value={value}>{children}</CollectionContext.Provider>;
 }
 
