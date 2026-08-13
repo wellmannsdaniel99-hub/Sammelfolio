@@ -3,10 +3,13 @@ import { euro } from '../../data/mock';
 import { BrandMark } from '../../components/BrandMark';
 import { ProductSilhouette } from '../../components/ProductSilhouette';
 import { useCollection } from '../../store/collection';
+import { useSealedPrices } from '../../store/sealedPrices';
 
 export default function PortfolioScreen() {
   const { items } = useCollection();
-  const value = items.reduce((sum, item) => sum + item.marketPrice * item.quantity, 0);
+  const { latestPrice } = useSealedPrices();
+  const currentPrice = (item: typeof items[number]) => item.kind === 'Sealed' && item.language === 'DE' ? latestPrice(item.id, item.marketPrice) : item.marketPrice;
+  const value = items.reduce((sum, item) => sum + currentPrice(item) * item.quantity, 0);
   const invested = items.reduce((sum, item) => sum + item.buyPrice * item.quantity, 0);
   const gain = value - invested;
   const pct = invested ? (gain / invested) * 100 : 0;
@@ -22,7 +25,7 @@ export default function PortfolioScreen() {
       <View style={styles.stats}><View><Text style={styles.statLabel}>INVESTIERT</Text><Text style={styles.statValue}>{euro(invested)}</Text></View><View><Text style={styles.statLabel}>SAMMLERSTÜCKE</Text><Text style={styles.statValue}>{items.reduce((s,i)=>s+i.quantity,0)}</Text></View></View>
     </View>
     <View style={styles.sectionRow}><Text style={styles.sectionTitle}>Deine Highlights</Text><Text style={styles.sectionMeta}>{items.length} Positionen</Text></View>
-    {items.length===0?<View style={styles.empty}><Text style={styles.emptyIcon}>◇</Text><Text style={styles.emptyTitle}>Dein Folio wartet</Text><Text style={styles.emptyText}>Füge Karten sowie ungeöffnete Produkte wie TTBs, Displays, Booster Bundles und Tins hinzu und verfolge deine Sammlung an einem Ort.</Text></View>:items.map(item=><View key={item.id} style={styles.card}>{item.photoUri?<Image source={{uri:item.photoUri}} style={styles.photo}/>:<ProductSilhouette kind={item.kind} type={item.productType} size={58}/>}<View style={styles.cardCopy}><Text style={styles.cardName}>{item.name}</Text><Text style={styles.meta}>{item.subtitle} · {item.quantity}×</Text></View><Text style={styles.cardValue}>{euro(item.marketPrice*item.quantity)}</Text></View>)}
+    {items.length===0?<View style={styles.empty}><Text style={styles.emptyIcon}>◇</Text><Text style={styles.emptyTitle}>Dein Folio wartet</Text><Text style={styles.emptyText}>Füge Karten sowie ungeöffnete Produkte wie TTBs, Displays, Booster Bundles und Tins hinzu und verfolge deine Sammlung an einem Ort.</Text></View>:items.map(item=>{const price=currentPrice(item);return <View key={item.id} style={styles.card}>{item.photoUri?<Image source={{uri:item.photoUri}} style={styles.photo}/>:<ProductSilhouette kind={item.kind} type={item.productType} size={58}/>}<View style={styles.cardCopy}><Text style={styles.cardName}>{item.name}</Text><Text style={styles.meta}>{item.subtitle} · {item.quantity}×</Text></View><Text style={styles.cardValue}>{euro(price*item.quantity)}</Text></View>})}
   </ScrollView></SafeAreaView>;
 }
 
