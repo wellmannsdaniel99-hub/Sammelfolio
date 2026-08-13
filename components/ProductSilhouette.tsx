@@ -11,7 +11,7 @@ export function ProductSilhouette({ type, kind = 'Sealed', size = 58 }: Props) {
 
 function renderShape(type?: ProductType) {
   switch(type){
-    case 'Top-Trainer-Box': return <View style={s.etb}><View style={s.etbTop}/><View style={s.etbSide}/><View style={s.etbFace}/><Text style={s.tiny}>ETB</Text></View>;
+    case 'Top-Trainer-Box': return <View style={s.etb}><View style={s.etbTop}/><View style={s.etbSide}/><View style={s.etbFace}/><Text style={s.tiny}>TTB</Text></View>;
     case 'Display': return <View style={s.display}><View style={s.displayBack}/><View style={s.displayBase}/><View style={s.displaySide}/><View style={s.packRow}><View style={s.miniPack}/><View style={s.miniPack}/><View style={s.miniPack}/></View></View>;
     case 'Booster Bundle': return <View style={s.bundle}><View style={s.bundleTop}/><View style={s.bundleSide}/><View style={s.bundleFace}/><Text style={s.tiny}>6×</Text></View>;
     case 'Booster': return <View style={s.booster}><View style={s.boosterLip}/><View style={s.boosterFace}/><View style={s.boosterShine}/></View>;
