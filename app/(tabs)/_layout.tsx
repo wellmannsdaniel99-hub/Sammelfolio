@@ -15,6 +15,7 @@ export default function TabsLayout() {
             index: 'pie-chart-outline',
             collection: 'albums-outline',
             discover: 'search-outline',
+            wishlist: 'heart-outline',
             profile: 'person-outline',
           };
           return <Ionicons name={icons[route.name] ?? 'ellipse-outline'} color={color} size={size} />;
@@ -24,6 +25,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="index" options={{ title: 'Portfolio' }} />
       <Tabs.Screen name="collection" options={{ title: 'Sammlung' }} />
       <Tabs.Screen name="discover" options={{ title: 'Entdecken' }} />
+      <Tabs.Screen name="wishlist" options={{ title: 'Wünsche' }} />
       <Tabs.Screen name="profile" options={{ title: 'Profil' }} />
     </Tabs>
   );
