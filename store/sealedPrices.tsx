@@ -1,12 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react';
 
-type PriceEntry = { price: number; date: string; source: 'manual' };
+export type PriceEntry = { price: number; date: string; source: 'manual'; note?: string };
 type PriceHistory = Record<string, PriceEntry[]>;
 type SealedPriceContextValue = {
   history: PriceHistory;
-  setPrice: (productId: string, price: number) => void;
+  setPrice: (productId: string, price: number, note?: string) => void;
   latestPrice: (productId: string, fallback: number) => number;
+  latestEntry: (productId: string) => PriceEntry | undefined;
 };
 
 const STORAGE_KEY = '@sammelfolio/sealed-prices-v1';
@@ -26,17 +27,19 @@ export function SealedPriceProvider({ children }: PropsWithChildren) {
     if (hydrated) AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(history)).catch(() => {});
   }, [history, hydrated]);
 
-  const setPrice = (productId: string, price: number) => {
-    const entry: PriceEntry = { price, date: new Date().toISOString(), source: 'manual' };
+  const setPrice = (productId: string, price: number, note?: string) => {
+    const entry: PriceEntry = { price, date: new Date().toISOString(), source: 'manual', note: note?.trim() || undefined };
     setHistory(current => ({ ...current, [productId]: [...(current[productId] ?? []), entry] }));
   };
 
-  const latestPrice = (productId: string, fallback: number) => {
+  const latestEntry = (productId: string) => {
     const entries = history[productId];
-    return entries?.length ? entries[entries.length - 1].price : fallback;
+    return entries?.length ? entries[entries.length - 1] : undefined;
   };
 
-  const value = useMemo(() => ({ history, setPrice, latestPrice }), [history]);
+  const latestPrice = (productId: string, fallback: number) => latestEntry(productId)?.price ?? fallback;
+
+  const value = useMemo(() => ({ history, setPrice, latestPrice, latestEntry }), [history]);
   return <SealedPriceContext.Provider value={value}>{children}</SealedPriceContext.Provider>;
 }
 
