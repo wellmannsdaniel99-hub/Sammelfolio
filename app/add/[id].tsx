@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
-import { discoveries, euro } from '../../data/mock';
+import { euro, languageName } from '../../data/mock';
+import { discoveries } from '../../data/catalog';
 import { ProductSilhouette } from '../../components/ProductSilhouette';
 import { useCollection } from '../../store/collection';
 
@@ -49,7 +50,7 @@ export default function AddItemScreen() {
     <Text style={styles.label}>KAUFPREIS PRO STÜCK</Text><TextInput value={buyPrice} onChangeText={setBuyPrice} keyboardType="decimal-pad" style={styles.input} />
     <Text style={styles.label}>KAUFDATUM</Text><TextInput value={purchaseDate} onChangeText={setPurchaseDate} placeholder="YYYY-MM-DD" placeholderTextColor="#657089" style={styles.input} />
     <Text style={styles.label}>NOTIZEN</Text><TextInput value={notes} onChangeText={setNotes} placeholder="z. B. bei Händler XY gekauft" placeholderTextColor="#657089" style={[styles.input,styles.notes]} multiline />
-    <View style={styles.summary}><View style={styles.row}><Text style={styles.key}>Sammelfolio-Marktwert</Text><Text style={styles.val}>{item.marketPrice?euro(item.marketPrice):'Noch nicht gepflegt'}</Text></View><View style={styles.row}><Text style={styles.key}>Sprache</Text><Text style={styles.val}>Deutsch</Text></View><View style={styles.row}><Text style={styles.key}>Typ</Text><Text style={styles.val}>{item.kind==='Sealed'?item.productType:item.kind}</Text></View></View>
+    <View style={styles.summary}><View style={styles.row}><Text style={styles.key}>Aktueller Wert</Text><Text style={styles.val}>{item.marketPrice?euro(item.marketPrice):'Noch nicht gepflegt'}</Text></View><View style={styles.row}><Text style={styles.key}>Sprache</Text><Text style={styles.val}>{languageName(item.language)}</Text></View><View style={styles.row}><Text style={styles.key}>Typ</Text><Text style={styles.val}>{item.kind==='Sealed'&&item.productType==='Top-Trainer-Box'?(item.language==='EN'?'ETB':'TTB'):item.kind==='Sealed'?item.productType:item.kind}</Text></View></View>
     <Pressable style={styles.save} onPress={save}><Text style={styles.saveText}>In Sammlung speichern</Text></Pressable>
   </ScrollView></SafeAreaView>;
 }
