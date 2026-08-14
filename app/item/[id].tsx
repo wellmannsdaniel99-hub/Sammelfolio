@@ -1,6 +1,7 @@
 import { Image, Linking, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { discoveries, euro, languageName } from '../../data/mock';
+import { euro, languageName } from '../../data/mock';
+import { discoveries } from '../../data/catalog';
 import { ProductSilhouette } from '../../components/ProductSilhouette';
 import { useCollection } from '../../store/collection';
 import { useSealedPrices } from '../../store/sealedPrices';
