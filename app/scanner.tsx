@@ -2,7 +2,7 @@ import { useRef,useState } from 'react';
 import { Alert,Image,Pressable,SafeAreaView,ScrollView,StyleSheet,Text,View } from 'react-native';
 import { CameraView,useCameraPermissions } from 'expo-camera';
 import { router } from 'expo-router';
-import { discoveries } from '../data/mock';
+import { discoveries } from '../data/catalog';
 import { cardImage,searchGermanCards,TCGdexCardBrief } from '../services/tcgdex';
 import TextRecognition from '@infinitered/react-native-mlkit-text-recognition';
 
